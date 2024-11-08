@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 
@@ -9,15 +9,11 @@ void main() {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-        //colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
-        //dialogBackgroundColor: Colors.white,
         scaffoldBackgroundColor: Colors.white,
-        //useMaterial3: true,
       ),
       home: const MyHomePage(title: 'График сделки смены'),
     );
@@ -26,18 +22,13 @@ class MyApp extends StatelessWidget {
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
-
   final String title;
-
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-//String _selectedChartType = 'Линейный';
-//String _selectedChartType = 'Столбчатый';
-  final double _chartHeight = 6;
-
+  final double _chartHeight = 850;
   final List<String> _workerNames1 = [
     "Иванов И.И.",
     "Петров П.П.",
@@ -50,14 +41,11 @@ class _MyHomePageState extends State<MyHomePage> {
     "Алексеев А.А.",
     "Григорьев Г.Г."
   ];
-
-  final List<double> _barChartValues1 = [8, 10, 6, 12];
-  final List<double> _barChartValues2 = [5, 7, 8, 10];
-
+  final List<double> _barChartValues1 = [1500, 1607, 3506, 2900];
+  final List<double> _barChartValues2 = [3534, 2783, 754, 4174];
   String _chartTitle = "Переупаковка Стол (Штуки)";
   List<double> _currentBarChartValues = [];
   List<String> _currentWorkerNames = [];
-
   @override
   void initState() {
     super.initState();
@@ -82,41 +70,10 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-// @override
-// Widget build(BuildContext context) {
-// return Scaffold(
-// appBar: AppBar(
-// backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-// title: Text(widget.title),
-// ),
-// body: Column(
-// children: [
-// DropdownButton<String>(
-// value: _selectedChartType,
-// items: <String>['Линейный', 'Столбчатый', 'Круговой']
-// .map<DropdownMenuItem<String>>((String value) {
-// return DropdownMenuItem<String>(
-// value: value,
-// child: Text(value),
-// );
-// }).toList(),
-// onChanged: (String? newValue) {
-// setState(() {
-// _selectedChartType = newValue!;
-// });
-// },
-// ),
-// Expanded(child: _buildChart()),
-// ],
-// ),
-// );
-// }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        //backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         backgroundColor: const Color.fromARGB(255, 188, 225, 255),
         title: Text(widget.title),
       ),
@@ -126,7 +83,14 @@ class _MyHomePageState extends State<MyHomePage> {
             _chartTitle,
             style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
-          //const SizedBox(height: 15,),
+          // Expanded(
+          //   child: Row(
+          //     mainAxisAlignment: MainAxisAlignment.spaceAround,
+          //     children: [
+          //       Expanded(child: _buildChart()),
+          //     ],
+          //   ),
+          // ),
           Expanded(child: _buildChart()),
         ],
       ),
@@ -134,187 +98,164 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget _buildChart() {
-// switch (_selectedChartType) {
-// case 'Линейный':
-// return SizedBox(
-// height: _chartHeight,
-// child: LineChart(
-// LineChartData(
-// gridData: const FlGridData(show: false),
-// titlesData: const FlTitlesData(
-// leftTitles:
-// AxisTitles(sideTitles: SideTitles(showTitles: true)),
-// bottomTitles:
-// AxisTitles(sideTitles: SideTitles(showTitles: true)),
-// ),
-// borderData: FlBorderData(show: true),
-// lineBarsData: [
-// LineChartBarData(
-// spots: [
-// FlSpot(0, 1),
-// FlSpot(1, 3),
-// FlSpot(2, 2),
-// FlSpot(3, 4),
-// FlSpot(4, 3),
-// ],
-// isCurved: true,
-// color: Colors.blue,
-// dotData: const FlDotData(show: false),
-// belowBarData: BarAreaData(show: false),
-// ),
-// ],
-// ),
-// ),
-// );
-// case 'Столбчатый':
-// return SizedBox(
-// height: _chartHeight,
-// child: BarChart(
-// BarChartData(
-// alignment: BarChartAlignment.spaceAround,
-// barGroups: _barChartValues.asMap().entries.map((entry) {
-// int index = entry.key;
-// double value = entry.value;
-
-// return BarChartGroupData(
-// x: index,
-// barRods: [
-// BarChartRodData(
-// toY: value,
-// color: Colors.blue,
-// width: 20,
-// borderRadius: BorderRadius.circular(5),
-// ),
-// ],
-// );
-// }).toList(),
-// titlesData: FlTitlesData(
-// bottomTitles: AxisTitles(
-// sideTitles: SideTitles(
-// showTitles: true,
-// reservedSize: 40,
-// interval: 1,
-// getTitlesWidget: (value, meta) {
-// return Text(
-// _workerNames[value.toInt()], // Отображение ФИО
-// style: TextStyle(color: Colors.black, fontSize: 10),
-// textAlign: TextAlign.center,
-// );
-// },
-// ),
-// ),
-// ),
-// borderData: FlBorderData(show: true),
-// gridData: FlGridData(show: true),
-// barTouchData: BarTouchData(enabled: true),
-// maxY: _barChartValues.reduce((a, b) => a > b ? a : b) + 1,
-// ),
-// ),
-// );
-
-// case 'Круговой':
-// return SizedBox(
-// height: _chartHeight,
-// child: PieChart(
-// PieChartData(
-// sections: [
-// PieChartSectionData(
-// value: 40, title: '40%', color: Colors.blue),
-// PieChartSectionData(
-// value: 30, title: '30%', color: Colors.green),
-// PieChartSectionData(value: 20, title: '20%', color: Colors.red),
-// PieChartSectionData(
-// value: 10, title: '10%', color: Colors.yellow),
-// ],
-// ),
-// ),
-// );
-// default:
-// return Container();
-// }
-
     return Padding(
-      padding: const EdgeInsets.only(top: 20, right: 40),
-      child: SizedBox(
-        height: _chartHeight,
-        child: BarChart(
-          BarChartData(
-            alignment: BarChartAlignment.spaceBetween,
-            //groupsSpace: 60,
-            barGroups: _currentBarChartValues.asMap().entries.map((entry) {
-              int index = entry.key;
-              double value = entry.value;
-
-              return BarChartGroupData(
-                x: index,
-                barRods: [
-                  BarChartRodData(
-                    toY: value,
-                    color: const Color.fromARGB(255, 34, 167, 201),
-                    width: 50,
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                ],
-              );
-            }).toList(),
-            titlesData: FlTitlesData(
-              leftTitles: AxisTitles(
-                sideTitles: SideTitles(
-                  showTitles: true,
-                  reservedSize: 180,
-                  interval: 1,
-                  getTitlesWidget: (value, meta) {
-                    int index = value.toInt();
-                    if (index >= 0 && index < _currentWorkerNames.length) {
-                      return Text(
-                        _currentWorkerNames[index],
-                        style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold),
-                        textAlign: TextAlign.center,
-                      );
-                    } else {
-                      return Text('');
-                    }
-                  },
-                ),
-              ),
-              bottomTitles: AxisTitles(
-                sideTitles: SideTitles(
-                  showTitles: true,
-                  reservedSize: 50,
-                  interval: 500,
-                  getTitlesWidget: (value, meta) {
-                    return Text(
-                      (value.toInt() * 500).toString(),
-                      style: const TextStyle(color: Colors.black, fontSize: 15),
-                      textAlign: TextAlign.center,
+        //padding: const EdgeInsets.only(top: 0, right: 525, left: 525, bottom: 0),
+        padding: const EdgeInsets.symmetric(horizontal: 525.0),
+        child: Transform.rotate(
+          angle: pi / 2,
+          child: SizedBox(
+            height: _chartHeight,
+            child: Stack(children: [
+              BarChart(
+                BarChartData(
+                  alignment: BarChartAlignment.spaceAround,
+                  barGroups:
+                      _currentBarChartValues.asMap().entries.map((entry) {
+                    int index = entry.key;
+                    double value = entry.value;
+                    return BarChartGroupData(
+                      x: index,
+                      barRods: [
+                        BarChartRodData(
+                          toY: value,
+                          color: const Color.fromARGB(255, 34, 167, 201),
+                          width: 120,
+                          borderRadius: BorderRadius.circular(3),
+                          // backDrawRodData: BackgroundBarChartRodData(
+                          //   show: true,
+                          //   toY: value,
+                          //   color: Colors.transparent,
+                          //   getRodBackDraw: (value, meta) => Container(
+                          //     alignment: Alignment.topCenter,
+                          //     child: Text(
+                          //       value.toInt().toString(),
+                          //       style: const TextStyle(
+                          //         color: Colors.black,
+                          //         fontSize: 10,
+                          //       ),
+                          //     ),
+                          //   ),
+                          // ),
+                        ),
+                      ],
                     );
-                  },
-                  // rotateAngle: 45,
-                  // showTitles: false,
+                  }).toList(),
+                  titlesData: FlTitlesData(
+                    rightTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        reservedSize: 50,
+                        interval: 500,
+                        getTitlesWidget: (value, meta) {
+                          return Transform.rotate(
+                            angle: -pi / 2,
+                            child: Text(
+                              value.toInt().toString(),
+                              style: const TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    bottomTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        reservedSize: 50,
+                        interval: 1,
+                        getTitlesWidget: (value, meta) {
+                          int index = value.toInt();
+                          if (index >= 0 &&
+                              index < _currentWorkerNames.length) {
+                            return Transform.rotate(
+                              angle: -pi / 2,
+                              child: Text(
+                                _currentWorkerNames[index],
+                                style: const TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            );
+                          } else {
+                            return const Text('');
+                          }
+                        },
+                      ),
+                    ),
+                    topTitles: const AxisTitles(
+                      axisNameSize: 36,
+                      sideTitles: SideTitles(
+                        showTitles: false,
+                      ),
+                    ),
+                    leftTitles: const AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: false,
+                      ),
+                    ),
+                  ),
+                  borderData: FlBorderData(show: true),
+                  gridData: const FlGridData(show: true),
+                  barTouchData: BarTouchData(enabled: true),
+                  maxY: 5000,
+                  minY: 0,
                 ),
               ),
-              topTitles: const AxisTitles(
-                axisNameSize: 36,
-                sideTitles: SideTitles(
-                  showTitles: false,
+              Positioned(
+                left: -15,
+                right: 37,
+                top: (_chartHeight * 2500) / (5000 - 0),
+                child: Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 10),
+                      child: Transform.rotate(
+                        angle: -pi / 2,
+                        child: const Text(
+                          '2500',
+                          style: TextStyle(
+                            fontSize: 15,
+                            color: Color.fromARGB(255, 244, 98, 54),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Container(
+                        height: 4,
+                        color: Colors.red,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              rightTitles: const AxisTitles(
-                sideTitles: SideTitles(
-                  showTitles: false,
-                ),
-              ),
-            ),
-            borderData: FlBorderData(show: true),
-            gridData: const FlGridData(show: true),
-            barTouchData: BarTouchData(enabled: true),
-            maxY: _currentBarChartValues.reduce((a, b) => a > b ? a : b) + 1,
+              // Positioned.fill(
+              //   child: Stack(
+              //     children: _currentBarChartValues.asMap().entries.map((entry) {
+              //       int index = entry.key;
+              //       double value = entry.value;
+              //       return Positioned(
+              //         left: (index * 60) + 20, // по х
+              //         bottom: value + 10, // по y
+              //         child: Text(
+              //           value.toString(),
+              //           style: const TextStyle(
+              //             color: Colors.black,
+              //             fontWeight: FontWeight.bold,
+              //           ),
+              //         ),
+              //       );
+              //     }).toList(),
+              //   ),
+              // ),
+            ]),
           ),
-        ),
-      ),
-    );
+        ));
   }
 }
